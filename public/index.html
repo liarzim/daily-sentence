@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>משפט יומי</title>
+<meta name="theme-color" content="#F4F2F6">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700&display=swap">
+<style>
+:root {
+  --bg: #F4F2F6; --card: #FFFFFF; --ink: #1F1A24; --muted: #5E5666;
+  --line: #C9C2D0; --soft: #E4DFE8; --accent: #A61E55; --good: #0B6B63; --warn: #8A4B00;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font-family: Heebo, Arial, sans-serif; font-size: 16px; line-height: 1.5; }
+#app { max-width: 480px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
+header.top { padding: 28px 20px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+header.top h1 { margin: 0; font-size: 26px; font-weight: 700; }
+header.top p { margin: 0; font-size: 14px; color: var(--muted); }
+main { flex: 1; padding: 0 16px 16px; display: flex; flex-direction: column; gap: 12px; }
+.card { background: var(--card); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.card.dark { background: var(--ink); color: #FFFFFF; }
+.card h2 { margin: 0; font-size: 17px; font-weight: 700; }
+.card h3 { margin: 0; font-size: 13px; font-weight: 500; color: var(--muted); }
+.card.dark h3 { color: #D9D3DF; }
+.row { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; }
+.cols { display: flex; gap: 12px; }
+.cols > * { flex: 1; min-width: 0; }
+.field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+label, .hint { font-size: 13px; color: var(--muted); }
+.hint { margin: 0; }
+input[type=text], input[type=tel], input[type=email], input[type=password], input[type=date], select, textarea {
+  width: 100%; min-width: 0; min-height: 46px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 10px;
+  font: inherit; color: var(--ink); background: #FFFFFF;
+}
+textarea { min-height: 84px; resize: vertical; }
+button { font: inherit; cursor: pointer; }
+.btn { min-height: 46px; padding: 0 16px; border-radius: 12px; border: 0; background: var(--accent); color: #FFFFFF; font-weight: 500; }
+.btn.outline { background: #FFFFFF; color: var(--accent); border: 1px solid var(--accent); }
+.btn.ghost { background: none; color: #FFFFFF; border: 1px solid #FFFFFF; }
+.btn:disabled { opacity: .5; cursor: default; }
+.link { min-height: 44px; padding: 0 10px; border: 0; background: none; color: var(--accent); font-size: 14px; font-weight: 500; }
+.link.quiet { color: var(--muted); font-weight: 400; }
+.pill { min-height: 44px; padding: 0 16px; border-radius: 22px; border: 1px solid var(--line); background: #FFFFFF; color: var(--muted); font-size: 15px; }
+.pill[aria-pressed=true] { border-color: var(--accent); background: var(--accent); color: #FFFFFF; font-weight: 500; }
+.pill.dark[aria-pressed=true] { border-color: var(--ink); background: var(--ink); }
+.pill.good[aria-pressed=true] { border-color: var(--good); background: var(--good); }
+.days { display: flex; gap: 4px; }
+.days .pill { flex: 1; min-width: 0; padding: 0; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag { padding: 3px 10px; border-radius: 12px; background: var(--bg); font-size: 12px; font-weight: 500; }
+.tag.ai { background: var(--ink); color: #FFFFFF; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 12px; color: var(--muted); }
+.meta .good { color: var(--good); font-weight: 500; }
+.meta .warn { color: var(--warn); font-weight: 500; }
+.sentence { margin: 0; font-size: 17px; line-height: 1.5; }
+.sentence.paused { color: var(--muted); }
+.actions { display: flex; flex-wrap: wrap; gap: 4px; }
+.divider { border-top: 1px solid var(--soft); padding-top: 10px; }
+.rate { width: 48px; height: 44px; border-radius: 10px; border: 1px solid var(--line); background: #FFFFFF; color: var(--muted); display: flex; align-items: center; justify-content: center; }
+.rate.up[aria-pressed=true] { border-color: var(--good); background: var(--good); color: #FFFFFF; }
+.rate.down[aria-pressed=true] { border-color: var(--ink); background: var(--ink); color: #FFFFFF; }
+nav.tabs { position: sticky; bottom: 0; background: #FFFFFF; border-top: 1px solid var(--soft); display: flex; padding-bottom: env(safe-area-inset-bottom); }
+nav.tabs button { flex: 1; min-height: 56px; border: 0; border-top: 3px solid #FFFFFF; background: none; color: var(--muted); font-size: 15px; }
+nav.tabs button[aria-current=page] { color: var(--accent); font-weight: 700; border-top-color: var(--accent); }
+#toast { position: fixed; bottom: 76px; left: 50%; transform: translateX(-50%); background: var(--ink); color: #FFFFFF; padding: 10px 18px; border-radius: 22px; font-size: 14px; opacity: 0; transition: opacity .2s; pointer-events: none; }
+#toast.show { opacity: 1; }
+.error { color: var(--accent); font-size: 14px; margin: 0; }
+.empty { color: var(--muted); font-size: 15px; margin: 0; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<script src="config.js"></script>
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const cfg = window.APP_CONFIG || {};
+const app = document.getElementById('app');
+const TZ = 'Asia/Jerusalem';
+const DAY_LETTERS = ['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ש'];
+const DAY_NAMES = ['יום ראשון', 'יום שני', 'יום שלישי', 'יום רביעי', 'יום חמישי', 'יום שישי', 'שבת'];
+const REASONS = {
+  day_off: 'יום שלא נבחר לשליחה', skipped_by_user: 'דילגת על היום', shabbat: 'שבת',
+  blocked_date: 'תאריך שחסמת', holiday: 'חג או יום זיכרון', window_passed: 'חלון השעות עבר',
+  no_sentence: 'לא נמצא משפט מתאים במאגר'
+};
+const KINDS = { holiday: 'חג', holiday_eve: 'ערב חג', memorial: 'יום זיכרון' };
+const RELATIONS = { partner: 'זוגיות', parent: 'הורה', child: 'ילד או ילדה', friend: 'חבר או חברה', other: 'אחר' };
+
+// ---------- עזרים ----------
+function h(tag, attrs, ...kids) {
+  const el = document.createElement(tag);
+  for (const kid of kids.flat(Infinity)) {
+    if (kid == null || kid === false) continue;
+    el.append(kid.nodeType ? kid : document.createTextNode(String(kid)));
+  }
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (v === false || v == null) continue;
+    if (k === 'class') el.className = v;
+    else if (k.startsWith('on')) el.addEventListener(k.slice(2), v);
+    else if (k === 'value') el.value = v;
+    else if (k === 'checked' || k === 'disabled') el[k] = !!v;
+    else el.setAttribute(k, v === true ? '' : v);
+  }
+  return el;
+}
+const today = () => new Intl.DateTimeFormat('en-CA', { timeZone: TZ }).format(new Date());
+const fmtDate = (d) => { const [y, m, day] = d.split('-'); return `${Number(day)}.${Number(m)}.${y}`; };
+const fmtHour = (n) => `${String(n).padStart(2, '0')}:00`;
+const fmtTime = (iso) => new Intl.DateTimeFormat('he-IL', { timeZone: TZ, hour: '2-digit', minute: '2-digit' }).format(new Date(iso));
+function normalizePhone(raw) {
+  let p = (raw || '').replace(/\D/g, '');
+  if (p.startsWith('00')) p = p.slice(2);
+  if (p.startsWith('0')) p = '972' + p.slice(1);
+  return p;
+}
+let toastTimer;
+function toast(text) {
+  const t = document.getElementById('toast');
+  t.textContent = text; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
+}
+function icon(path, flip) {
+  const ns = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('width', '22'); svg.setAttribute('height', '22'); svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('fill', 'none'); svg.setAttribute('stroke', 'currentColor'); svg.setAttribute('stroke-width', '2');
+  svg.setAttribute('stroke-linejoin', 'round'); svg.setAttribute('aria-hidden', 'true');
+  const p = document.createElementNS(ns, 'path'); p.setAttribute('d', path);
+  if (flip) p.setAttribute('transform', 'rotate(180 12 12)');
+  svg.append(p); return svg;
+}
+const THUMB = 'M7 10v10H4V10h3zm0 0l4-7a2 2 0 0 1 2 2v4h5a2 2 0 0 1 2 2.3l-1.2 6A2 2 0 0 1 16.8 20H7';
+const toggle = (label, on, onclick, cls = '') => h('button', { type: 'button', class: `pill ${cls}`, 'aria-pressed': String(!!on), onclick }, label);
+const hourSelect = (id, value, from, to, onchange) =>
+  h('select', { id, value: String(value), onchange: (e) => onchange(Number(e.target.value)) },
+    Array.from({ length: to - from + 1 }, (_, i) => h('option', { value: String(from + i) }, fmtHour(from + i))));
+
+// ---------- מצב ----------
+if (!cfg.supabaseUrl || !cfg.supabaseKey) {
+  app.append(h('main', { style: 'padding-top: 40px' }, h('section', { class: 'card' },
+    h('h2', null, 'חסרה הגדרת חיבור'),
+    h('p', { class: 'hint' }, 'האתר לא קיבל את כתובת המסד ואת המפתח הציבורי. יש לוודא שהמסד מחובר לפרויקט ב-Vercel ולפרוס מחדש.'))));
+  throw new Error('missing config');
+}
+const sb = createClient(cfg.supabaseUrl, cfg.supabaseKey);
+const state = {
+  user: null, tab: 'settings', settings: null, categories: [], userCats: {}, sentences: [], sends: [],
+  blocked: [], holidays: [], profile: null, bankFilter: 'all', editing: null, peek: false, loginError: ''
+};
+
+async function check(promise, okText) {
+  const { data, error } = await promise;
+  if (error) { console.error(error); toast('שגיאה: ' + (error.message || 'הפעולה נכשלה')); return null; }
+  if (okText) toast(okText);
+  return data ?? true;
+}
+
+async function bootstrap(uid) {
+  await check(sb.from('settings').insert({ user_id: uid }));
+  const { data: cats } = await sb.from('categories').select('id,is_adult').is('user_id', null);
+  if (cats?.length) {
+    await check(sb.from('user_categories').insert(cats.map((c) => ({ user_id: uid, category_id: c.id, enabled: !c.is_adult }))));
+  }
+  await check(sb.from('style_profiles').insert({ user_id: uid }));
+}
+
+async function loadAll() {
+  const uid = state.user.id;
+  let { data: settings } = await sb.from('settings').select('*').eq('user_id', uid).maybeSingle();
+  if (!settings) {
+    await bootstrap(uid);
+    ({ data: settings } = await sb.from('settings').select('*').eq('user_id', uid).maybeSingle());
+  }
+  const t = today();
+  const [cats, ucs, sens, sends, blocked, hols, prof] = await Promise.all([
+    sb.from('categories').select('*').order('created_at'),
+    sb.from('user_categories').select('*').eq('user_id', uid),
+    sb.from('sentences').select('*').eq('user_id', uid).order('created_at', { ascending: false }),
+    sb.from('sends').select('*').eq('user_id', uid).order('send_date', { ascending: false }).limit(60),
+    sb.from('blocked_dates').select('*').eq('user_id', uid).gte('blocked_date', t).order('blocked_date'),
+    sb.from('holidays').select('*').gte('holiday_date', t).order('holiday_date').limit(10),
+    sb.from('style_profiles').select('*').eq('user_id', uid).maybeSingle()
+  ]);
+  state.settings = settings;
+  state.categories = cats.data || [];
+  state.userCats = Object.fromEntries((ucs.data || []).map((u) => [u.category_id, u.enabled]));
+  state.sentences = sens.data || [];
+  state.sends = sends.data || [];
+  state.blocked = blocked.data || [];
+  state.holidays = hols.data || [];
+  state.profile = prof.data || { base_instructions: '', learned_summary: '' };
+}
+
+async function saveSettings(patch, rerender = true) {
+  Object.assign(state.settings, patch);
+  await check(sb.from('settings').update({ ...patch, updated_at: new Date().toISOString() }).eq('user_id', state.user.id), 'נשמר');
+  if (rerender) render();
+}
+const catName = (id) => state.categories.find((c) => c.id === id)?.name || '';
+const adultCat = () => state.categories.find((c) => c.is_adult && !c.user_id);
+async function setCategory(id, enabled) {
+  state.userCats[id] = enabled;
+  await check(sb.from('user_categories').upsert({ user_id: state.user.id, category_id: id, enabled }), 'נשמר');
+  render();
+}
+
+// ---------- מסך כניסה ----------
+function loginView() {
+  const email = h('input', { id: 'email', type: 'email', autocomplete: 'email', dir: 'ltr' });
+  const pass = h('input', { id: 'pass', type: 'password', autocomplete: 'current-password', dir: 'ltr' });
+  const submit = async (e) => {
+    e.preventDefault();
+    const { error } = await sb.auth.signInWithPassword({ email: email.value.trim(), password: pass.value });
+    if (error) { state.loginError = 'הכניסה נכשלה. בדוק את האימייל והסיסמה.'; render(); }
+  };
+  const google = async () => {
+    const { error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin } });
+    if (error) { state.loginError = 'הכניסה עם Google עוד לא הוגדרה.'; render(); }
+  };
+  return [
+    h('header', { class: 'top' }, h('div', null, h('h1', null, 'משפט יומי'), h('p', null, 'משפט אחד ביום, בשעה שלא מצפים לה'))),
+    h('main', null,
+      h('section', { class: 'card' },
+        h('button', { type: 'button', class: 'btn', onclick: google }, 'כניסה עם Google'),
+        h('p', { class: 'hint' }, 'או עם אימייל וסיסמה:'),
+        h('form', { onsubmit: submit, style: 'display: flex; flex-direction: column; gap: 12px' },
+          h('div', { class: 'field' }, h('label', { for: 'email' }, 'אימייל'), email),
+          h('div', { class: 'field' }, h('label', { for: 'pass' }, 'סיסמה'), pass),
+          h('button', { type: 'submit', class: 'btn outline' }, 'כניסה')),
+        state.loginError && h('p', { class: 'error' }, state.loginError)))
+  ];
+}
+
+// ---------- מסך הגדרות ----------
+function settingsView() {
+  const s = state.settings;
+  const isPartner = s.relationship_type === 'partner';
+  const overrides = new Set(state.blocked.filter((b) => b.send_anyway).map((b) => b.blocked_date));
+  const manual = state.blocked.filter((b) => !b.send_anyway);
+  const kindBlocked = (k) => (k === 'holiday' && s.block_holidays) || (k === 'holiday_eve' && s.block_holiday_eves) || (k === 'memorial' && s.block_memorial_days);
+  const text = (id, label, value, key, attrs = {}) => h('div', { class: 'field' }, h('label', { for: id }, label),
+    h('input', { id, type: 'text', value: value || '', ...attrs, onchange: (e) => saveSettings({ [key]: key === 'recipient_phone' ? normalizePhone(e.target.value) : e.target.value.trim() }, key === 'recipient_phone') }));
+  const choice = (label, key, options) => h('div', { class: 'field' }, h('label', null, label),
+    h('div', { class: 'chips' }, Object.entries(options).map(([v, l]) => toggle(l, s[key] === v, () => saveSettings({ [key]: v }), 'dark'))));
+
+  const newDate = h('input', { id: 'newdate', type: 'date', min: today() });
+  const newDesc = h('input', { id: 'newdesc', type: 'text', placeholder: 'למשל: יום הולדת' });
+  const addDate = async () => {
+    if (!newDate.value) return toast('בחר תאריך');
+    const row = await check(sb.from('blocked_dates').insert({ user_id: state.user.id, blocked_date: newDate.value, description: newDesc.value.trim() || null, source: 'manual' }).select().single(), 'נוסף');
+    if (row) { state.blocked.push(row); state.blocked.sort((a, b) => a.blocked_date.localeCompare(b.blocked_date)); render(); }
+  };
+  const removeBlocked = async (id) => { if (await check(sb.from('blocked_dates').delete().eq('id', id), 'הוסר')) { state.blocked = state.blocked.filter((b) => b.id !== id); render(); } };
+  const sendAnyway = async (hol) => {
+    const row = await check(sb.from('blocked_dates').upsert({ user_id: state.user.id, blocked_date: hol.holiday_date, description: hol.name, source: 'manual', send_anyway: true }, { onConflict: 'user_id,blocked_date,source' }).select().single(), 'נשמר');
+    if (row) { state.blocked = state.blocked.filter((b) => b.id !== row.id).concat(row); render(); }
+  };
+
+  const newCat = h('input', { id: 'newcat', type: 'text', placeholder: 'שם הקטגוריה' });
+  const newCatDesc = h('input', { id: 'newcatdesc', type: 'text', placeholder: 'תיאור קצר, ישמש גם את ה-AI' });
+  const addCategory = async () => {
+    const name = newCat.value.trim(); if (!name) return toast('כתוב שם לקטגוריה');
+    const row = await check(sb.from('categories').insert({ user_id: state.user.id, name, description: newCatDesc.value.trim() || null }).select().single());
+    if (row) { state.categories.push(row); await setCategory(row.id, true); }
+  };
+  const visibleCats = state.categories.filter((c) => !c.is_adult && (isPartner || !c.partner_only));
+  const ac = adultCat();
+
+  return [
+    h('header', { class: 'top' },
+      h('div', null, h('h1', null, 'משפט יומי'), h('p', null, 'הגדרות שליחה')),
+      toggle(s.is_active ? 'השליחה פעילה' : 'השליחה כבויה', s.is_active, () => saveSettings({ is_active: !s.is_active }), 'good')),
+    h('main', null,
+      h('section', { class: 'card' },
+        h('h2', null, 'נמען'),
+        text('rname', 'שם לפנייה', s.recipient_name, 'recipient_name'),
+        text('rphone', 'טלפון לשליחה', s.recipient_phone, 'recipient_phone', { type: 'tel', dir: 'ltr', inputmode: 'tel', style: 'text-align: right' }),
+        h('p', { class: 'hint' }, 'מספר ישראלי אפשר לכתוב כרגיל (050...). הוא יומר לפורמט בינלאומי.')),
+
+      h('section', { class: 'card' },
+        h('h2', null, 'מי כותב ולמי'),
+        choice('אני', 'sender_gender', { male: 'גבר', female: 'אישה' }),
+        choice('הפנייה היא אל', 'recipient_gender', { male: 'גבר', female: 'אישה' }),
+        choice('סוג הקשר', 'relationship_type', RELATIONS),
+        h('p', { class: 'hint' }, 'הפרטים האלה קובעים את ניסוח המשפטים שה-AI ייצר ואילו קטגוריות מוצעות.')),
+
+      h('section', { class: 'card' },
+        h('h2', null, 'ימי שליחה'),
+        h('div', { class: 'days' }, DAY_LETTERS.map((d, i) => h('button', {
+          type: 'button', class: 'pill', 'aria-label': DAY_NAMES[i], 'aria-pressed': String(s.send_days.includes(i)),
+          onclick: () => saveSettings({ send_days: s.send_days.includes(i) ? s.send_days.filter((x) => x !== i) : [...s.send_days, i].sort() })
+        }, d)))),
+
+      h('section', { class: 'card' },
+        h('h2', null, 'חלון שעות'),
+        h('div', { class: 'cols' },
+          h('div', { class: 'field' }, h('label', { for: 'wfrom' }, 'מהשעה'), hourSelect('wfrom', s.window_start_hour, 0, 23, (v) => v < s.window_end_hour ? saveSettings({ window_start_hour: v }) : (toast('שעת ההתחלה חייבת להיות לפני הסיום'), render()))),
+          h('div', { class: 'field' }, h('label', { for: 'wto' }, 'עד השעה'), hourSelect('wto', s.window_end_hour, 1, 24, (v) => v > s.window_start_hour ? saveSettings({ window_end_hour: v }) : (toast('שעת הסיום חייבת להיות אחרי ההתחלה'), render())))),
+        h('p', { class: 'hint' }, 'בכל יום נבחרת שעה אקראית בתוך החלון, כך שההודעה לא מגיעה בשעה קבועה.')),
+
+      h('section', { class: 'card' },
+        h('h2', null, 'ימים ללא שליחה'),
+        h('div', { class: 'row' }, h('span', null, 'חגי ישראל'), toggle(s.block_holidays ? 'חסום' : 'פתוח', s.block_holidays, () => saveSettings({ block_holidays: !s.block_holidays }))),
+        h('div', { class: 'row' }, h('span', null, 'ערבי חג'), toggle(s.block_holiday_eves ? 'חסום' : 'פתוח', s.block_holiday_eves, () => saveSettings({ block_holiday_eves: !s.block_holiday_eves }))),
+        h('div', { class: 'row' }, h('span', null, 'ימי זיכרון ותשעה באב'), toggle(s.block_memorial_days ? 'חסום' : 'פתוח', s.block_memorial_days, () => saveSettings({ block_memorial_days: !s.block_memorial_days }))),
+        h('div', { class: 'row' }, h('span', null, 'שבתות'), toggle(s.block_shabbat ? 'חסום' : 'פתוח', s.block_shabbat, () => saveSettings({ block_shabbat: !s.block_shabbat }))),
+        h('div', { class: 'divider', style: 'display: flex; flex-direction: column; gap: 4px' },
+          h('h3', null, 'המועדים הקרובים בלוח'),
+          state.holidays.length ? state.holidays.map((hol) => {
+            const over = overrides.has(hol.holiday_date);
+            const blocked = kindBlocked(hol.kind) && !over;
+            return h('div', { class: 'row' },
+              h('span', { style: 'font-size: 15px' }, `${hol.name} · ${fmtDate(hol.holiday_date)}`, h('br'),
+                h('span', { class: 'hint' }, `${KINDS[hol.kind]} · ${blocked ? 'לא נשלח' : 'נשלח'}`)),
+              over ? h('button', { type: 'button', class: 'link', onclick: () => removeBlocked(state.blocked.find((b) => b.send_anyway && b.blocked_date === hol.holiday_date).id) }, 'לבטל חריגה')
+                : kindBlocked(hol.kind) ? h('button', { type: 'button', class: 'link', onclick: () => sendAnyway(hol) }, 'לשלוח בכל זאת') : null);
+          }) : h('p', { class: 'empty' }, 'אין מועדים קרובים בלוח.')),
+        h('div', { class: 'divider', style: 'display: flex; flex-direction: column; gap: 8px' },
+          h('h3', null, 'תאריכים שחסמת'),
+          manual.length ? manual.map((b) => h('div', { class: 'row' },
+            h('span', { style: 'font-size: 15px' }, `${fmtDate(b.blocked_date)}${b.description ? ' · ' + b.description : ''}`),
+            h('button', { type: 'button', class: 'link', onclick: () => removeBlocked(b.id) }, 'הסרה'))) : h('p', { class: 'empty' }, 'עוד לא חסמת תאריכים.'),
+          h('div', { class: 'cols' },
+            h('div', { class: 'field' }, h('label', { for: 'newdate' }, 'תאריך'), newDate),
+            h('div', { class: 'field' }, h('label', { for: 'newdesc' }, 'תיאור'), newDesc)),
+          h('button', { type: 'button', class: 'btn outline', onclick: addDate }, 'הוספת תאריך ללא שליחה'))),
+
+      h('section', { class: 'card' },
+        h('h2', null, 'סוגי משפטים'),
+        h('div', { class: 'chips' }, visibleCats.map((c) => toggle(c.name, state.userCats[c.id], () => setCategory(c.id, !state.userCats[c.id])))),
+        h('div', { class: 'divider', style: 'display: flex; flex-direction: column; gap: 8px' },
+          h('h3', null, 'קטגוריה משלך'),
+          h('div', { class: 'field' }, h('label', { for: 'newcat' }, 'שם'), newCat),
+          h('div', { class: 'field' }, h('label', { for: 'newcatdesc' }, 'תיאור'), newCatDesc),
+          h('button', { type: 'button', class: 'btn outline', onclick: addCategory }, 'הוספת קטגוריה'))),
+
+      isPartner && ac && h('section', { class: 'card' },
+        h('h2', null, 'ארוטיקה'),
+        h('label', { style: 'display: flex; gap: 10px; align-items: center; min-height: 44px; font-size: 15px; color: var(--ink)' },
+          h('input', { type: 'checkbox', checked: s.adult_confirmed, style: 'width: 22px; height: 22px', onchange: (e) => saveSettings(e.target.checked ? { adult_confirmed: true } : { adult_confirmed: false, erotica_enabled: false }) }),
+          'אני מאשר/ת שאני ושהנמען/ת מעל גיל 18'),
+        h('div', { class: 'row' }, h('span', null, 'משפטים ארוטיים'),
+          h('button', { type: 'button', class: 'pill', disabled: !s.adult_confirmed, 'aria-pressed': String(s.erotica_enabled),
+            onclick: async () => { const on = !s.erotica_enabled; await saveSettings({ erotica_enabled: on }, false); await setCategory(ac.id, on); } }, s.erotica_enabled ? 'פעיל' : 'כבוי')),
+        s.erotica_enabled && [
+          h('div', { class: 'field' }, h('label', null, 'רמה: 1 רמז עדין, 5 ישיר ונועז'),
+            h('div', { class: 'days' }, [1, 2, 3, 4, 5].map((n) => h('button', { type: 'button', class: 'pill', 'aria-pressed': String(s.erotica_level === n), 'aria-label': `רמה ${n}`, onclick: () => saveSettings({ erotica_level: n }) }, n)))),
+          h('div', { class: 'cols' },
+            h('div', { class: 'field' }, h('label', { for: 'efrom' }, 'מהשעה'), hourSelect('efrom', s.erotica_start_hour, 0, 23, (v) => v < s.erotica_end_hour ? saveSettings({ erotica_start_hour: v }) : (toast('שעת ההתחלה חייבת להיות לפני הסיום'), render()))),
+            h('div', { class: 'field' }, h('label', { for: 'eto' }, 'עד השעה'), hourSelect('eto', s.erotica_end_hour, 1, 24, (v) => v > s.erotica_start_hour ? saveSettings({ erotica_end_hour: v }) : (toast('שעת הסיום חייבת להיות אחרי ההתחלה'), render()))))
+        ],
+        h('p', { class: 'hint' }, 'ההגדרות נשמרות, אבל שליחה בחלון הנפרד עוד לא פעילה. היא תתווסף בגרסה הבאה.')),
+
+      h('button', { type: 'button', class: 'link quiet', onclick: () => sb.auth.signOut() }, `יציאה (${state.user.email || ''})`))
+  ];
+}
+
+// ---------- מסך המאגר ----------
+function bankView() {
+  const s = state.settings;
+  const usable = state.categories.filter((c) => state.userCats[c.id] && (!c.is_adult || s.erotica_enabled));
+  const filters = { all: 'הכול', manual: 'שלי', ai: 'AI', paused: 'מושהים' };
+  const list = state.sentences.filter((x) => state.bankFilter === 'all' || (state.bankFilter === 'paused' ? x.status === 'paused' : x.source === state.bankFilter));
+
+  const newText = h('textarea', { id: 'newtext', placeholder: 'כתוב משפט בקול שלך' });
+  const levelField = h('div', { class: 'field', style: 'display: none' }, h('label', { for: 'newlevel' }, 'רמה'),
+    h('select', { id: 'newlevel', value: String(s.erotica_level) }, [1, 2, 3, 4, 5].map((n) => h('option', { value: String(n) }, n))));
+  const isAdult = (id) => state.categories.find((c) => c.id === id)?.is_adult;
+  const newCat = h('select', { id: 'newsencat', onchange: (e) => { levelField.style.display = isAdult(e.target.value) ? '' : 'none'; } },
+    usable.map((c) => h('option', { value: c.id }, c.name)));
+  const add = async () => {
+    const text = newText.value.trim(); if (!text) return toast('כתוב משפט');
+    if (!newCat.value) return toast('בחר קטגוריה');
+    const row = await check(sb.from('sentences').insert({
+      user_id: state.user.id, category_id: newCat.value, text, source: 'manual',
+      erotica_level: isAdult(newCat.value) ? Number(levelField.querySelector('select').value) : null
+    }).select().single(), 'נוסף למאגר');
+    if (row) { state.sentences.unshift(row); render(); }
+  };
+  const update = async (id, patch, ok) => {
+    if (await check(sb.from('sentences').update(patch).eq('id', id), ok)) { Object.assign(state.sentences.find((x) => x.id === id), patch); state.editing = null; render(); }
+  };
+  const remove = async (id) => {
+    if (!confirm('למחוק את המשפט מהמאגר?')) return;
+    if (await check(sb.from('sentences').delete().eq('id', id), 'נמחק')) { state.sentences = state.sentences.filter((x) => x.id !== id); render(); }
+  };
+  const saveProfile = async (patch) => {
+    Object.assign(state.profile, patch);
+    await check(sb.from('style_profiles').upsert({ user_id: state.user.id, ...patch, updated_at: new Date().toISOString() }), 'נשמר');
+  };
+  const statusLabel = (x) => x.status === 'paused' ? h('span', { class: 'warn' }, x.score < 0 ? 'מושהה, דורג נמוך' : 'מושהה')
+    : x.score > 0 ? h('span', { class: 'good' }, 'דורג גבוה') : !x.last_sent_at ? h('span', null, 'טרם נשלח') : h('span', null, `נשלח ${fmtDate(x.last_sent_at.slice(0, 10))}`);
+
+  return [
+    h('header', { class: 'top' }, h('div', null, h('h1', null, 'מאגר משפטים'), h('p', null, `${state.sentences.filter((x) => x.status === 'active').length} פעילים מתוך ${state.sentences.length}`))),
+    h('main', null,
+      h('section', { class: 'card' },
+        h('h2', null, 'משפט חדש'),
+        h('div', { class: 'field' }, h('label', { for: 'newtext' }, 'הטקסט'), newText),
+        h('div', { class: 'cols' }, h('div', { class: 'field' }, h('label', { for: 'newsencat' }, 'קטגוריה'), newCat), levelField),
+        h('button', { type: 'button', class: 'btn', onclick: add }, 'הוספה למאגר'),
+        h('button', { type: 'button', class: 'btn outline', disabled: true }, 'יצירת משפטים ב-AI (בקרוב)')),
+
+      h('div', { class: 'chips' }, Object.entries(filters).map(([k, l]) => toggle(l, state.bankFilter === k, () => { state.bankFilter = k; render(); }, 'dark'))),
+
+      list.length ? list.map((x) => h('article', { class: 'card' },
+        h('div', { class: 'meta' },
+          h('span', { class: x.source === 'ai' ? 'tag ai' : 'tag' }, x.source === 'ai' ? 'AI' : 'שלי'),
+          h('span', { class: 'tag' }, catName(x.category_id)),
+          x.erotica_level && h('span', { class: 'tag' }, `רמה ${x.erotica_level}`),
+          statusLabel(x)),
+        state.editing === x.id
+          ? [h('textarea', { id: `edit-${x.id}`, 'aria-label': 'עריכת המשפט', value: x.text }),
+             h('div', { class: 'actions' },
+               h('button', { type: 'button', class: 'link', onclick: () => { const v = document.getElementById(`edit-${x.id}`).value.trim(); if (v) update(x.id, { text: v }, 'נשמר'); } }, 'שמירה'),
+               h('button', { type: 'button', class: 'link quiet', onclick: () => { state.editing = null; render(); } }, 'ביטול'))]
+          : [h('p', { class: x.status === 'paused' ? 'sentence paused' : 'sentence' }, x.text),
+             h('div', { class: 'actions' },
+               h('button', { type: 'button', class: 'link', onclick: () => { state.editing = x.id; render(); } }, 'עריכה'),
+               x.status === 'active'
+                 ? h('button', { type: 'button', class: 'link quiet', onclick: () => update(x.id, { status: 'paused' }, 'הושהה') }, 'השהיה')
+                 : h('button', { type: 'button', class: 'link', onclick: () => update(x.id, { status: 'active' }, 'חזר למאגר') }, 'החזרה למאגר'),
+               h('button', { type: 'button', class: 'link quiet', onclick: () => remove(x.id) }, 'מחיקה'))]
+      )) : h('section', { class: 'card' }, h('p', { class: 'empty' }, 'אין משפטים בתצוגה הזאת.')),
+
+      h('section', { class: 'card' },
+        h('h2', null, 'הסגנון שלך'),
+        h('div', { class: 'field' }, h('label', { for: 'base' }, 'הנחיות קבועות ל-AI'),
+          h('textarea', { id: 'base', value: state.profile.base_instructions || '', onchange: (e) => saveProfile({ base_instructions: e.target.value.trim() }) })),
+        h('div', { class: 'field' }, h('label', { for: 'learned' }, 'מה נלמד מהדירוגים'),
+          h('textarea', { id: 'learned', value: state.profile.learned_summary || '', placeholder: 'יתמלא אוטומטית כשה-AI יופעל. אפשר גם לכתוב ידנית.', onchange: (e) => saveProfile({ learned_summary: e.target.value.trim() }) }))))
+  ];
+}
+
+// ---------- מסך היסטוריה ודירוג ----------
+function historyView() {
+  const s = state.settings;
+  const t = today();
+  const todays = state.sends.find((x) => x.send_date === t);
+  const sentenceOf = (id) => state.sentences.find((x) => x.id === id);
+  const rate = async (send, value) => {
+    const rating = send.user_rating === value ? null : value;
+    if (await check(sb.from('sends').update({ user_rating: rating }).eq('id', send.id), 'הדירוג נשמר')) {
+      send.user_rating = rating;
+      const { data } = await sb.from('sentences').select('*').eq('user_id', state.user.id).order('created_at', { ascending: false });
+      if (data) state.sentences = data;
+      render();
+    }
+  };
+  const note = async (send, value) => { if (await check(sb.from('sends').update({ user_note: value || null }).eq('id', send.id), 'נשמר')) send.user_note = value; };
+
+  let nextText;
+  if (!s.is_active) nextText = 'השליחה כבויה. אפשר להפעיל אותה במסך ההגדרות.';
+  else if (!todays) nextText = s.skip_date === t ? 'דילגת על היום. מחר חוזרים לשגרה.' : `השעה של היום תיקבע בקרוב, בין ${fmtHour(s.window_start_hour)} ל-${fmtHour(s.window_end_hour)}.`;
+  else if (todays.status === 'planned') nextText = state.peek ? `היום, בסביבות ${fmtHour(todays.planned_hour)}.` : `היום, בשעה אקראית בין ${fmtHour(s.window_start_hour)} ל-${fmtHour(s.window_end_hour)}.`;
+  else if (todays.status === 'sent' || todays.status === 'sending') nextText = 'המשפט של היום כבר נשלח. הבא יגיע ביום השליחה הבא.';
+  else nextText = `היום לא נשלח: ${REASONS[todays.skip_reason] || 'סיבה לא ידועה'}.`;
+  const canAct = s.is_active && (!todays || todays.status === 'planned') && s.skip_date !== t;
+  const past = state.sends.filter((x) => x.status !== 'planned');
+
+  return [
+    h('header', { class: 'top' }, h('div', null, h('h1', null, 'היסטוריה ודירוג'), h('p', null, 'מה נשלח, איך הגיבו, ומה דעתך'))),
+    h('main', null,
+      h('section', { class: 'card dark' },
+        h('h3', null, 'ההודעה הבאה'),
+        h('p', { style: 'margin: 0; font-size: 17px; font-weight: 500; line-height: 1.4' }, nextText),
+        canAct && h('div', { class: 'cols' },
+          todays?.status === 'planned' && !state.peek && h('button', { type: 'button', class: 'btn ghost', onclick: () => { state.peek = true; render(); } }, 'הצצה לשעה'),
+          h('button', { type: 'button', class: 'btn ghost', onclick: () => saveSettings({ skip_date: t }) }, 'דילוג על היום'))),
+
+      past.length ? past.map((x) => {
+        const sen = sentenceOf(x.sentence_id);
+        if (x.status === 'skipped' || (x.status === 'failed' && !sen)) {
+          return h('article', { class: 'card', style: 'flex-direction: row; align-items: center; justify-content: space-between' },
+            h('span', { style: 'font-size: 14px; color: var(--muted)' }, `${fmtDate(x.send_date)} · לא נשלח · ${REASONS[x.skip_reason] || ''}`),
+            h('span', { class: 'tag' }, x.status === 'failed' ? 'תקלה' : 'יום ללא שליחה'));
+        }
+        return h('article', { class: 'card' },
+          h('div', { class: 'meta', style: 'justify-content: space-between' },
+            h('span', null, [fmtDate(x.send_date), x.sent_at && fmtTime(x.sent_at), sen && catName(sen.category_id), sen && (sen.source === 'ai' ? 'AI' : 'שלי')].filter(Boolean).join(' · ')),
+            h('span', { class: x.status === 'sent' ? 'good' : 'warn' }, x.status === 'sent' ? 'נשלח' : x.status === 'sending' ? 'בשליחה' : 'תקלה')),
+          h('p', { class: 'sentence' }, sen ? sen.text : 'המשפט נמחק מהמאגר.'),
+          h('div', { class: 'hint' }, 'תגובת הנמען: ', x.recipient_reaction ? x.recipient_reaction + (x.recipient_replied ? ', וגם תשובה' : '') : x.recipient_replied ? 'תשובה להודעה' : 'אין תגובה'),
+          h('div', { class: 'row divider' },
+            h('span', { style: 'font-size: 14px; font-weight: 500' }, 'הדירוג שלך'),
+            h('div', { style: 'display: flex; gap: 8px' },
+              h('button', { type: 'button', class: 'rate up', 'aria-label': 'משפט טוב', 'aria-pressed': String(x.user_rating === 1), onclick: () => rate(x, 1) }, icon(THUMB)),
+              h('button', { type: 'button', class: 'rate down', 'aria-label': 'משפט פחות טוב', 'aria-pressed': String(x.user_rating === -1), onclick: () => rate(x, -1) }, icon(THUMB, true)))),
+          x.user_rating === -1 && h('div', { class: 'field' }, h('label', { for: `note-${x.id}` }, 'מה פחות עבד? (לא חובה)'),
+            h('input', { id: `note-${x.id}`, type: 'text', value: x.user_note || '', onchange: (e) => note(x, e.target.value.trim()) })));
+      }) : h('section', { class: 'card' }, h('p', { class: 'empty' }, 'עוד לא נשלחו משפטים. הראשון יופיע כאן אחרי השליחה.')))
+  ];
+}
+
+// ---------- ציור ----------
+function render() {
+  const scroll = window.scrollY;
+  app.replaceChildren();
+  if (!state.user) { app.append(...loginView()); return; }
+  if (!state.settings) { app.append(h('main', { style: 'padding-top: 40px' }, h('p', { class: 'empty' }, 'טוען...'))); return; }
+  const view = state.tab === 'bank' ? bankView() : state.tab === 'history' ? historyView() : settingsView();
+  const tabs = { settings: 'הגדרות', bank: 'מאגר', history: 'היסטוריה' };
+  app.append(...view, h('nav', { class: 'tabs', 'aria-label': 'ניווט ראשי' },
+    Object.entries(tabs).map(([k, l]) => h('button', { type: 'button', 'aria-current': state.tab === k ? 'page' : null, onclick: () => { state.tab = k; state.editing = null; render(); window.scrollTo(0, 0); } }, l))));
+  window.scrollTo(0, scroll);
+}
+
+let loadedFor = null;
+sb.auth.onAuthStateChange((_event, session) => {
+  state.user = session?.user || null;
+  if (!state.user) { loadedFor = null; state.settings = null; render(); return; }
+  if (loadedFor === state.user.id) return;
+  loadedFor = state.user.id; state.loginError = '';
+  render();
+  // טעינה מחוץ ל-callback, כדי לא לחסום את מנגנון ההתחברות
+  setTimeout(async () => { await loadAll(); render(); }, 0);
+});
+render();
+</script>
+</body>
+</html>

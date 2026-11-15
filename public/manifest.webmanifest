@@ -1,0 +1,11 @@
+{
+  "name": "משפט יומי",
+  "short_name": "משפט יומי",
+  "lang": "he",
+  "dir": "rtl",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F4F2F6",
+  "theme_color": "#F4F2F6",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}
