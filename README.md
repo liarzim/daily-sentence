@@ -20,14 +20,14 @@
 
 | קובץ | תוכן |
 | --- | --- |
-| `index.html`, `styles.css`, `app.js` | הממשק: הגדרות, מאגר משפטים, היסטוריה ודירוג |
-| `api/config.js` | מוסר לדפדפן את כתובת המסד והמפתח הציבורי ממשתני הסביבה |
+| `public/index.html` | הממשק: הגדרות, מאגר משפטים, היסטוריה ודירוג |
+| `scripts/build.mjs` | בזמן הפריסה כותב לדפדפן את כתובת המסד והמפתח הציבורי ממשתני הסביבה |
 | `supabase/schema.sql` | הטבלאות והפרדת הנתונים בין משתמשים |
 | `supabase/holidays.sql` | לוח חגים משותף |
 | `supabase/functions.sql` | `next_send` ו-`confirm_send`: ההחלטה היומית והרישום |
-| `supabase/ratings.sql` | הדירוג של המשתמש מעדכן את ציון המשפט |
+| `supabase/app.sql` | הרשאות לממשק, וחישוב ציון המשפט מדירוגים ותגובות |
 
-סדר ההרצה בעורך ה-SQL של Supabase: `schema.sql`, `holidays.sql`, `functions.sql`, `ratings.sql`.
+סדר ההרצה בעורך ה-SQL של Supabase: `schema.sql`, `holidays.sql`, `functions.sql`, `app.sql`.
 
 ## אבטחה
 

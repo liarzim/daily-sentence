@@ -50,9 +50,20 @@ begin
          status = case when v_score <= -2 and status = 'active' then 'paused' else status end
    where id = new.sentence_id;
 
+  -- מונה דירוגים: לפיו ה-AI יידע מתי לעדכן את סיכום הסגנון.
+  if new.user_rating is distinct from old.user_rating then
+    update public.style_profiles
+       set ratings_since_update = ratings_since_update + 1
+     where user_id = new.user_id;
+  end if;
+
   return new;
 end;
 $$;
+
+-- ניקוי גרסה קודמת של מנגנון הדירוג, אם הותקנה.
+drop trigger if exists sends_apply_user_rating on public.sends;
+drop function if exists public.apply_user_rating();
 
 drop trigger if exists sends_recompute_score on public.sends;
 create trigger sends_recompute_score
