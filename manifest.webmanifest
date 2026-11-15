@@ -1,0 +1,10 @@
+{
+  "name": "משפט יומי",
+  "short_name": "משפט יומי",
+  "lang": "he",
+  "dir": "rtl",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4f2f6",
+  "theme_color": "#f4f2f6"
+}

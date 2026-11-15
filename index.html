@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f4f2f6">
+<title>משפט יומי</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- מסך טעינה ושגיאה -->
+  <section id="screen-loading" class="login">
+    <h1>משפט יומי</h1>
+    <p class="hint" id="loading-text">טוען…</p>
+  </section>
+
+  <!-- התחברות -->
+  <section id="screen-login" class="login" hidden>
+    <h1>משפט יומי</h1>
+    <p class="hint">משפט אחד ביום, בשעה שלא מצפים לה.</p>
+    <button type="button" class="btn primary block" data-action="login-google">התחברות עם Google</button>
+    <div class="or">או</div>
+    <form id="login-form" class="card">
+      <div class="field">
+        <label for="login-email">אימייל</label>
+        <input id="login-email" type="email" autocomplete="username" dir="ltr" required>
+      </div>
+      <div class="field">
+        <label for="login-password">סיסמה</label>
+        <input id="login-password" type="password" autocomplete="current-password" dir="ltr" required>
+      </div>
+      <button type="submit" class="btn block">התחברות עם אימייל</button>
+    </form>
+  </section>
+
+  <!-- האפליקציה -->
+  <div id="screen-app" hidden>
+    <header class="top">
+      <div>
+        <h1 id="page-title">משפט יומי</h1>
+        <p id="page-sub">הגדרות שליחה</p>
+      </div>
+      <button type="button" id="active-toggle" class="pill live status" data-action="toggle-active" aria-pressed="false">כבוי</button>
+    </header>
+
+    <main>
+      <div id="tab-settings"></div>
+      <div id="tab-bank" hidden></div>
+      <div id="tab-history" hidden></div>
+    </main>
+
+    <nav class="tabs" aria-label="ניווט ראשי">
+      <div class="inner">
+        <button type="button" data-action="tab" data-tab="settings" aria-current="page">הגדרות</button>
+        <button type="button" data-action="tab" data-tab="bank">מאגר</button>
+        <button type="button" data-action="tab" data-tab="history">היסטוריה</button>
+      </div>
+    </nav>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/app.js"></script>
+</body>
+</html>
