@@ -1,5 +1,5 @@
 -- משפט יומי: לוגיקת השליחה היומית
--- מריצים פעם אחת בעורך ה-SQL של Supabase, אחרי schema.sql.
+-- מריצים בעורך ה-SQL של Supabase, אחרי schema.sql ו-holidays.sql.
 -- אפשר להריץ שוב בבטחה: הפונקציות מוחלפות והאילוץ נבנה מחדש.
 --
 -- הרעיון: כל ההחלטות (האם שולחים היום, באיזו שעה, איזה משפט) מתקבלות כאן, במסד.
@@ -59,15 +59,29 @@ begin
     elsif s.block_shabbat and v_dow = 6 then
       v_reason := 'shabbat';
     elsif exists (
+      -- תאריך שהמשתמש חסם בעצמו
       select 1 from public.blocked_dates b
       where b.user_id = p_user
         and b.blocked_date = v_date
+        and b.source = 'manual'
         and not b.send_anyway
-        and (b.source = 'manual'
-             or (b.source = 'holiday' and s.block_holidays)
-             or (b.source = 'holiday_eve' and s.block_holiday_eves))
     ) then
       v_reason := 'blocked_date';
+    elsif exists (
+      -- חג, ערב חג או יום זיכרון מהלוח המשותף, לפי מה שהמשתמש בחר לחסום
+      select 1 from public.holidays h
+      where h.holiday_date = v_date
+        and ((h.kind = 'holiday' and s.block_holidays)
+             or (h.kind = 'holiday_eve' and s.block_holiday_eves)
+             or (h.kind = 'memorial' and s.block_memorial_days))
+    ) and not exists (
+      -- אלא אם המשתמש ביקש "לשלוח בכל זאת" ביום הזה
+      select 1 from public.blocked_dates b
+      where b.user_id = p_user
+        and b.blocked_date = v_date
+        and b.send_anyway
+    ) then
+      v_reason := 'holiday';
     elsif v_hour >= s.window_end_hour then
       v_reason := 'window_passed';
     end if;
