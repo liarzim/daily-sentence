@@ -3,9 +3,15 @@
 // משתני סביבה ב-Vercel (שרת בלבד): SUPABASE_URL, SUPABASE_SECRET_KEY, WEBHOOK_SECRET
 
 export function parseEvent(body) {
-  if (!body || body.typeWebhook !== 'incomingMessageReceived') return null;
+  const type = body?.typeWebhook;
+  if (type !== 'incomingMessageReceived' && type !== 'outgoingMessageReceived') return null;
   const md = body.messageData || {};
   const chat = String(body.senderData?.chatId || '').split('@')[0];
+  // אירוע יוצא נחשב רק בצ'אט עם עצמך (בדיקות); בצ'אט של נמען זו תגובה שלך ולא שלו
+  if (type === 'outgoingMessageReceived') {
+    const own = String(body.instanceData?.wid || '').split('@')[0];
+    if (!own || own !== chat) return null;
+  }
   const quoted = md.quotedMessage?.stanzaId || null;
   if (md.typeMessage === 'reactionMessage') {
     const emoji = md.extendedTextMessageData?.text || null;
