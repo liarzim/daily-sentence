@@ -25,9 +25,11 @@
 | `supabase/schema.sql` | הטבלאות והפרדת הנתונים בין משתמשים |
 | `supabase/holidays.sql` | לוח חגים משותף |
 | `supabase/functions.sql` | `next_send` ו-`confirm_send`: ההחלטה היומית והרישום |
+| `supabase/reactions.sql` | קליטת תגובות ותשובות הנמען (`record_reaction`) |
+| `api/wa-webhook.js` | נקודת קליטה ב-Vercel לאירועים נכנסים מ-Green API |
 | `supabase/app.sql` | הרשאות לממשק, וחישוב ציון המשפט מדירוגים ותגובות |
 
-סדר ההרצה בעורך ה-SQL של Supabase: `schema.sql`, `holidays.sql`, `functions.sql`, `app.sql`.
+סדר ההרצה בעורך ה-SQL של Supabase: `schema.sql`, `holidays.sql`, `functions.sql`, `app.sql`, `reactions.sql`.
 
 ## אבטחה
 
